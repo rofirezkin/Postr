@@ -9,6 +9,7 @@ import {RootStackParamList} from '../../router';
 import TextInput from '../../components/TextInput/TextInput';
 import Avatar from '../../components/Avatar/Avatar';
 import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
 import {urlApi} from '../../config/Api';
 import i18n from '../../locale/i18n';
 import {
@@ -20,6 +21,7 @@ import {
   ToastAndroid,
 } from 'react-native';
 import {Colors} from '../../utils/colors';
+import {showMessage} from 'react-native-flash-message';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PostScreen'>;
 const PostScreen = ({navigation, route}: Props) => {
@@ -118,8 +120,17 @@ const PostScreen = ({navigation, route}: Props) => {
       longitude: position?.coords?.longitude,
     };
 
-    axios.post(urlApi, dataSubmit).then(() => {
-      navigation.replace('HomeScreen');
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        axios.post(urlApi, dataSubmit).then(() => {
+          navigation.replace('HomeScreen');
+        });
+      } else {
+        showMessage({
+          message: i18n.t('general.general.noInternet'),
+          type: 'danger',
+        });
+      }
     });
   };
 
@@ -158,6 +169,7 @@ const PostScreen = ({navigation, route}: Props) => {
       <Padding flexDirection>
         <Avatar avatar={param?.avatar} />
         <TextInput
+          autoFocus
           placeholder={`${i18n.t('general.placeholderSubmit')} ${
             param?.name
           } ?`}

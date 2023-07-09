@@ -1,5 +1,6 @@
 export const english = {
   general: {
+    noInternet: 'No internet connection',
     homeTitle: 'Welcome to the Posters App',
     submit: 'Submit',
     endList: 'you have reached the end of the list',

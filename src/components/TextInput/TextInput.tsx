@@ -6,17 +6,24 @@ interface TextInputProps {
   onChangeText: (value: string) => void;
   value: string;
   placeholder: string;
+  autoFocus?: boolean;
 }
 
-const TextInput = ({onChangeText, value, placeholder}: TextInputProps) => {
+const TextInput = ({
+  onChangeText,
+  value,
+  placeholder,
+  autoFocus,
+}: TextInputProps) => {
   return (
     <TextInputRN
+      textAlignVertical="top"
       value={value}
       onChangeText={onChangeText}
       editable
       multiline
       numberOfLines={4}
-      autoFocus={true}
+      autoFocus={autoFocus}
       placeholder={placeholder}
       placeholderTextColor={Colors.text}
       maxLength={100}

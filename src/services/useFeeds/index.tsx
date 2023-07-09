@@ -6,6 +6,7 @@ import axios from 'axios';
 import {GlobalContext} from '../globalContext';
 import NetInfo from '@react-native-community/netinfo';
 import {showMessage} from 'react-native-flash-message';
+import i18n from '../../locale/i18n';
 
 type UserType =
   | {
@@ -84,7 +85,7 @@ export const useFeeds = () => {
         getDataFeeds();
       } else {
         showMessage({
-          message: 'Tidak ada koneksi internet',
+          message: i18n.t('general.general.noInternet'),
           type: 'danger',
         });
         getData('listData').then(res => {

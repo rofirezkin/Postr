@@ -1,5 +1,6 @@
 export const indo = {
   general: {
+    noInternet: 'Tidak ada koneksi internet',
     homeTitle: 'Selamat datang di Aplikasi Postr',
     submit: 'Kirim',
     endList: 'anda sudah menuju akhir list',
