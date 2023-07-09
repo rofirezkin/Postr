@@ -50,5 +50,3 @@ Create a file in the `android` folder called `local.properties` and fill it with
 For more detailed information, you can refer to this [link](https://stackoverflow.com/questions/27620262/sdk-location-not-found-define-location-with-sdk-dir-in-the-local-properties-fil)
 
 
-## messsage
-# Mohon maaf saya lupa untuk lakukan first commit
