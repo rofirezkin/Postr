@@ -23,7 +23,6 @@ export const useFeeds = () => {
   const [page, setPage] = useState<number>(1);
 
   const pageHandling = () => {
-    console.log('page handlinggggg');
     setPage(prevState => prevState + 1);
   };
 
@@ -80,7 +79,6 @@ export const useFeeds = () => {
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
-      console.log('Connection type', state.type);
       if (state.isConnected) {
         getDataFeeds();
       } else {
@@ -92,7 +90,6 @@ export const useFeeds = () => {
           setDataFeeds(res.value);
         });
       }
-      console.log('Is connected?', state.isConnected);
     });
 
     return unsubscribe();

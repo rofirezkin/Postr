@@ -10,7 +10,6 @@ interface LangProps {
 
 const Lang = ({onPressEn, onPressIn}: LangProps) => {
   const {language} = useContext(GlobalContext);
-  console.log('language ', language);
 
   const styleButtonEn = {
     backgroundColor: language === 'en' ? Colors.blue : Colors.border,

@@ -88,12 +88,10 @@ const PostScreen = ({navigation, route}: Props) => {
     Geolocation.getCurrentPosition(
       position => {
         setPosition(position);
-        console.log('position idudduu', position);
       },
       error => {
         Alert.alert(`Code ${error.code}`, error.message);
         setPosition(null);
-        console.log(error);
       },
       {
         accuracy: {

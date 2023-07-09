@@ -33,7 +33,6 @@ const ReplyScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     axios.get(`${urlApi}/${param?.id}/reply`).then(res => {
-      console.log('dataa ', res.data);
       setData(res.data);
     });
   }, [param, handleReply]);
@@ -51,7 +50,6 @@ const ReplyScreen = ({navigation, route}: Props) => {
       if (state.isConnected) {
         axios.post(`${urlApi}/${param?.id}/reply`, dataReply).then(res => {
           setReply('');
-          console.log('dataa ', res.data);
         });
       } else {
         showMessage({
