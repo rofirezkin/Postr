@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
     textAlign: 'center',
     fontSize: 20,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   paramText: {
     color: Colors.blue,

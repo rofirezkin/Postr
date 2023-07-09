@@ -18,5 +18,6 @@ export const english = {
       askMe: 'Ask Me Later',
       cancel: 'Cancel',
     },
+    reply: 'Reply',
   },
 };

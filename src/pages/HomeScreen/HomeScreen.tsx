@@ -1,5 +1,5 @@
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
-import React, {useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import SafeArea from '../../utils/SafeArea';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../router';
@@ -17,23 +17,19 @@ import {useFeeds} from '../../services/useFeeds';
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
 const HomeScreen = ({navigation}: Props) => {
-  const [dataFeeds, user, pageHandling, endList] = useFeeds();
-  const {moreLoading} = useContext(GlobalContext);
-  const {languageHandling} = useContext(GlobalContext);
+  const [dataFeeds, user, pageHandling] = useFeeds();
+  const {moreLoading, endList, languageHandling} = useContext(GlobalContext);
 
   const fetchMoreData = () => {
     if (!moreLoading && !endList) {
       pageHandling();
     }
   };
-  useEffect(() => {
-    console.log('sdata feed');
-  }, [dataFeeds]);
 
   const renderFooter = () => {
     return (
       <View style={styles.footer}>
-        {moreLoading && <ActivityIndicator color="red" />}
+        {moreLoading && <ActivityIndicator color={Colors.text} />}
         {endList && (
           <Text style={{color: Colors.text}}>{i18n.t('general.endList')}</Text>
         )}

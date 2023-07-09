@@ -4,8 +4,8 @@ import {getData, storeData} from '../../utils/Stroage';
 import {urlApi} from '../../config/Api';
 import axios from 'axios';
 import {GlobalContext} from '../globalContext';
-
-import {useNavigation} from '@react-navigation/native';
+import NetInfo from '@react-native-community/netinfo';
+import {showMessage} from 'react-native-flash-message';
 
 type UserType =
   | {
@@ -16,14 +16,13 @@ type UserType =
   | undefined;
 
 export const useFeeds = () => {
-  const navigation = useNavigation();
-  const {moreLoadingHandling} = useContext(GlobalContext);
+  const {moreLoadingHandling, endListHandling} = useContext(GlobalContext);
   const [dataFeeds, setDataFeeds] = useState<any>([]);
   const [user, setUser] = useState<UserType>();
   const [page, setPage] = useState<number>(1);
-  const [endList, setEndList] = useState<boolean>(false);
 
   const pageHandling = () => {
+    console.log('page handlinggggg');
     setPage(prevState => prevState + 1);
   };
 
@@ -55,31 +54,48 @@ export const useFeeds = () => {
     getUser();
   }, [getUser]);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      // do something
-      moreLoadingHandling(true);
-      const url = `${urlApi}?page=${page}&limit=10`;
-      axios
-        .get(url)
-        .then(res => {
-          if (res.data.length === 0) {
-            setEndList(true);
-          } else {
-            setDataFeeds((prevState: any) => [
-              ...prevState,
-              ...res.data.reverse(),
-            ]);
-          }
-          moreLoadingHandling(false);
-        })
-        .catch(err => {
-          moreLoadingHandling(false);
-          console.log(err);
-        });
-    });
-    return unsubscribe;
-  }, [page, navigation]);
+  const getDataFeeds = () => {
+    moreLoadingHandling(true);
+    const url = `${urlApi}?page=${page}&limit=10`;
+    axios
+      .get(url)
+      .then(res => {
+        if (res.data.length === 0) {
+          endListHandling(true);
+        } else {
+          setDataFeeds((prevState: any) => [
+            ...prevState,
+            ...res.data.reverse(),
+          ]);
+        }
+        storeData('listData', {value: dataFeeds});
+        moreLoadingHandling(false);
+      })
+      .catch(err => {
+        moreLoadingHandling(false);
+        console.log(err);
+      });
+  };
 
-  return [dataFeeds, user, pageHandling, endList];
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log('Connection type', state.type);
+      if (state.isConnected) {
+        getDataFeeds();
+      } else {
+        showMessage({
+          message: 'Tidak ada koneksi internet',
+          type: 'danger',
+        });
+        getData('listData').then(res => {
+          setDataFeeds(res.value);
+        });
+      }
+      console.log('Is connected?', state.isConnected);
+    });
+
+    return unsubscribe();
+  }, [page]);
+
+  return [dataFeeds, user, pageHandling];
 };

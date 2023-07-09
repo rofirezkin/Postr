@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import SafeArea from '../../utils/SafeArea';
 import Header from '../../components/Header/Header';
 import Padding from '../../utils/Padding';
@@ -16,8 +16,10 @@ import {
   Linking,
   PermissionsAndroid,
   Platform,
+  Text,
   ToastAndroid,
 } from 'react-native';
+import {Colors} from '../../utils/colors';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PostScreen'>;
 const PostScreen = ({navigation, route}: Props) => {
@@ -27,83 +29,7 @@ const PostScreen = ({navigation, route}: Props) => {
   });
   const param = route.params;
 
-  useEffect(() => {
-    getLocation();
-  }, []);
-  const submitData = () => {
-    const dataSubmit = {
-      username: param?.username,
-      description: description,
-      name: param?.name,
-      avatar: param?.avatar,
-      latitude: position?.coords?.latitude,
-      longitude: position?.coords?.longitude,
-    };
-
-    axios.post(urlApi, dataSubmit).then(() => {
-      navigation.replace('HomeScreen');
-    });
-  };
-
-  const getLocation = async () => {
-    const hasPermission = await hasLocationPermission();
-
-    if (!hasPermission) {
-      return;
-    }
-    Geolocation.getCurrentPosition(
-      position => {
-        setPosition(position);
-        console.log('position idudduu', position);
-      },
-      error => {
-        Alert.alert(`Code ${error.code}`, error.message);
-        setPosition(null);
-        console.log(error);
-      },
-      {
-        accuracy: {
-          android: 'high',
-          ios: 'best',
-        },
-
-        timeout: 15000,
-        maximumAge: 10000,
-        distanceFilter: 0,
-      },
-    );
-  };
-
-  const hasPermissionIOS = async () => {
-    const openSetting = () => {
-      Linking.openSettings().catch(() => {
-        Alert.alert('Unable to open settings');
-      });
-    };
-    const status = await Geolocation.requestAuthorization('whenInUse');
-
-    if (status === 'granted') {
-      return true;
-    }
-
-    if (status === 'denied') {
-      Alert.alert(i18n.t('general.iosPermission.denied'));
-    }
-
-    if (status === 'disabled') {
-      Alert.alert(i18n.t('general.iosPermission.disable'), '', [
-        {
-          text: i18n.t('general.iosPermission.goToSetting'),
-          onPress: openSetting,
-        },
-        {text: i18n.t('general.iosPermission.cancel'), onPress: () => {}},
-      ]);
-    }
-
-    return false;
-  };
-
-  const hasLocationPermission = async () => {
+  const hasLocationPermission = useCallback(async () => {
     if (Platform.OS === 'ios') {
       const hasPermission = await hasPermissionIOS();
       return hasPermission;
@@ -149,6 +75,81 @@ const PostScreen = ({navigation, route}: Props) => {
     }
 
     return false;
+  }, []);
+
+  const getLocation = useCallback(async () => {
+    const hasPermission = await hasLocationPermission();
+
+    if (!hasPermission) {
+      return;
+    }
+    Geolocation.getCurrentPosition(
+      position => {
+        setPosition(position);
+        console.log('position idudduu', position);
+      },
+      error => {
+        Alert.alert(`Code ${error.code}`, error.message);
+        setPosition(null);
+        console.log(error);
+      },
+      {
+        accuracy: {
+          android: 'high',
+          ios: 'best',
+        },
+
+        timeout: 15000,
+        maximumAge: 10000,
+        distanceFilter: 0,
+      },
+    );
+  }, [hasLocationPermission]);
+  useEffect(() => {
+    getLocation();
+  }, [getLocation]);
+  const submitData = () => {
+    const dataSubmit = {
+      username: param?.username,
+      description: description,
+      name: param?.name,
+      avatar: param?.avatar,
+      latitude: position?.coords?.latitude,
+      longitude: position?.coords?.longitude,
+    };
+
+    axios.post(urlApi, dataSubmit).then(() => {
+      navigation.replace('HomeScreen');
+    });
+  };
+
+  const hasPermissionIOS = async () => {
+    const openSetting = () => {
+      Linking.openSettings().catch(() => {
+        Alert.alert('Unable to open settings');
+      });
+    };
+    const status = await Geolocation.requestAuthorization('whenInUse');
+
+    if (status === 'granted') {
+      return true;
+    }
+
+    if (status === 'denied') {
+      Alert.alert(i18n.t('general.iosPermission.denied'));
+    }
+
+    if (status === 'disabled') {
+      Alert.alert(i18n.t('general.iosPermission.disable'), '', [
+        {
+          text: i18n.t('general.iosPermission.goToSetting'),
+          onPress: openSetting,
+        },
+        {text: i18n.t('general.iosPermission.cancel'), onPress: () => {}},
+      ]);
+    }
+
+    return false;
   };
 
   return (
@@ -163,6 +164,12 @@ const PostScreen = ({navigation, route}: Props) => {
           value={description}
           onChangeText={value => setDescription(value)}
         />
+      </Padding>
+      <Padding>
+        <Text style={{color: Colors.text, marginTop: 5, fontSize: 12}}>
+          {' '}
+          lat :{position?.coords?.latitude} long : {position?.coords?.longitude}
+        </Text>
       </Padding>
       <Padding>
         <Button

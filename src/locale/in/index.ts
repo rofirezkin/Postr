@@ -17,5 +17,6 @@ export const indo = {
       askMe: 'Tanya Nanti',
       cancel: 'Batalkan',
     },
+    reply: 'Balasan',
   },
 };

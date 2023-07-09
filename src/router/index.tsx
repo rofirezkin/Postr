@@ -17,6 +17,8 @@ export type RootStackParamList = {
         name: string;
         avatar: string;
         description: string;
+        latitude: string;
+        longitude: string;
       }
     | undefined;
   PostScreen:

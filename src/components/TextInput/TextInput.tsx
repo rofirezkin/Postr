@@ -20,19 +20,21 @@ const TextInput = ({onChangeText, value, placeholder}: TextInputProps) => {
       placeholder={placeholder}
       placeholderTextColor={Colors.text}
       maxLength={100}
-      style={{
-        flex: 1,
-        padding: 10,
-        color: Colors.text,
-        height: 100,
-        borderWidth: 1,
-        borderColor: Colors.border,
-        borderRadius: 10,
-      }}
+      style={styles.input}
     />
   );
 };
 
 export default TextInput;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  input: {
+    flex: 1,
+    padding: 10,
+    color: Colors.text,
+    height: 100,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 10,
+  },
+});

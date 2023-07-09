@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import SafeArea from '../../utils/SafeArea';
 import Header from '../../components/Header/Header';
@@ -11,26 +11,30 @@ import Avatar from '../../components/Avatar/Avatar';
 import TextInput from '../../components/TextInput/TextInput';
 import axios from 'axios';
 import i18n from '../../locale/i18n';
+import {urlApi} from '../../config/Api';
+import {Colors} from '../../utils/colors';
+
+interface ReplyHandlingProps {
+  description: string | undefined;
+  name: string | undefined;
+  avatar: string | undefined;
+  username: string | undefined;
+  feedId: number | undefined;
+}
 type Props = NativeStackScreenProps<RootStackParamList, 'ReplyScreen'>;
 const ReplyScreen = ({navigation, route}: Props) => {
-  const [reply, setReply] = useState('');
+  const [reply, setReply] = useState<string>('');
   const [data, setData] = useState<string[]>([]);
-  const [handleReply, setHandleReply] = useState();
+  const [handleReply, setHandleReply] = useState<
+    ReplyHandlingProps | undefined
+  >();
   const param = route.params;
 
   useEffect(() => {
-    axios
-      .get(
-        `https://64aa65800c6d844abede69a9.mockapi.io/postr/feeds/${param?.id}/reply`,
-      )
-      .then(res => {
-        console.log('dataa ', res.data);
-        // const dataFilter = res.data.filter(
-        //   response => response.feedId === param?.id,
-        // );
-        // console.log('data filter', dataFilter);
-        setData(res.data);
-      });
+    axios.get(`${urlApi}/${param?.id}/reply`).then(res => {
+      console.log('dataa ', res.data);
+      setData(res.data);
+    });
   }, [param, handleReply]);
 
   const replyHandling = () => {
@@ -43,27 +47,26 @@ const ReplyScreen = ({navigation, route}: Props) => {
     };
     setHandleReply(dataReply);
 
-    axios
-      .post(
-        `https://64aa65800c6d844abede69a9.mockapi.io/postr/feeds/${param?.id}/reply`,
-        dataReply,
-      )
-      .then(res => {
-        setReply('');
-        console.log('dataa ', res.data);
-      });
+    axios.post(`${urlApi}/${param?.id}/reply`, dataReply).then(res => {
+      setReply('');
+      console.log('dataa ', res.data);
+    });
   };
 
   return (
     <SafeArea>
       <Header onPress={() => navigation.goBack()} title="Reply Screen" />
       <Feed dataFeed={param} />
+      <Text style={{color: Colors.text, marginTop: 5, fontSize: 12}}>
+        {' '}
+        lat :{param?.latitude} long : {param?.longitude}
+      </Text>
       <Padding>
         {data.length > 0 && (
-          <Text style={{color: 'white', fontSize: 16}}>Reply</Text>
+          <Text style={styles.reply}>{i18n.t('general.reply')}</Text>
         )}
       </Padding>
-      {data.map((res, index) => {
+      {data.map((res: any, index) => {
         return <Feed key={index} dataFeed={res} />;
       })}
       {/* <Feed dataFeed={dataReply} /> */}
@@ -84,4 +87,6 @@ const ReplyScreen = ({navigation, route}: Props) => {
 
 export default ReplyScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  reply: {color: 'white', fontSize: 16},
+});

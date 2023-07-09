@@ -1,6 +1,7 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import Padding from '../../utils/Padding';
+import {Colors} from '../../utils/colors';
 
 interface FeedProps {
   onPress?: () => void;
@@ -16,26 +17,15 @@ interface FeedProps {
 const Feed = ({onPress, dataFeed}: FeedProps) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <View
-        style={{
-          borderBottomColor: '#303336',
-          borderBottomWidth: 1,
-        }}>
+      <View style={styles.border}>
         <Padding flexDirection>
-          <Image
-            style={{
-              width: 30,
-              height: 30,
-              borderRadius: 50 / 2,
-              marginRight: 10,
-            }}
-            source={{uri: dataFeed?.avatar}}
-          />
-          <View style={{flex: 1}}>
-            <Text style={{color: 'white', fontSize: 15, fontWeight: 'bold'}}>
-              {dataFeed?.name} {dataFeed?.username}
-            </Text>
-            <Text style={{color: 'white'}}>{dataFeed?.description}</Text>
+          <Image style={styles.avatar} source={{uri: dataFeed?.avatar}} />
+          <View style={styles.flex}>
+            <View style={styles.containerText}>
+              <Text style={styles.name}>{dataFeed?.name}</Text>
+              <Text style={styles.username}>{dataFeed?.username}</Text>
+            </View>
+            <Text style={styles.text}>{dataFeed?.description}</Text>
           </View>
         </Padding>
       </View>
@@ -45,4 +35,29 @@ const Feed = ({onPress, dataFeed}: FeedProps) => {
 
 export default Feed;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  border: {
+    borderBottomColor: '#303336',
+    borderBottomWidth: 1,
+  },
+  avatar: {
+    width: 30,
+    height: 30,
+    borderRadius: 50 / 2,
+    marginRight: 10,
+  },
+  flex: {flex: 1},
+  containerText: {flexDirection: 'row', alignItems: 'flex-end'},
+  name: {color: Colors.text, fontSize: 15, fontWeight: 'bold'},
+  username: {
+    color: Colors.text,
+    fontSize: 13,
+    fontWeight: '500',
+    marginLeft: 5,
+  },
+  text: {
+    color: Colors.text,
+    fontSize: 16,
+    marginTop: 5,
+  },
+});
